@@ -21,7 +21,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import pandas as pd
 
-from .aux import load_aux_data
+from .auxiliary import load_aux_data
 from .business_days import business_day_diff, parse_holidays
 from .hashing import assign_row_ids, compute_run_hash
 from .matching import MatchingWaterfall, _dec
