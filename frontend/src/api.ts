@@ -1,4 +1,5 @@
-// v2 API client. Relative '/api' is proxied to the backend by Vite in dev.
+// VITE_API_BASE_URL is set for the static GCS build. Locally, the relative
+// path is proxied to the backend by Vite.
 import type {
   AuditLogOut,
   BreakAnalysisOut,
@@ -24,7 +25,7 @@ import type {
   TokenResponse,
 } from './types'
 
-const BASE = '/api'
+const BASE = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/$/, '')
 
 let authToken: string | null = null
 export function setAuthToken(token: string | null) {

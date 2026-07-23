@@ -16,6 +16,13 @@ node_modules/
 frontend/dist/
 frontend/.vite/
 
+# Terraform local state and provider cache (never commit cloud credentials or
+# state, which can contain sensitive deployment values).
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform/terraform.tfvars
+
 # Data / uploads (runtime artifacts)
 backend/uploads/
 backend/data/*.db

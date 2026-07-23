@@ -1,0 +1,6 @@
+# This file is safe to commit. Copy it to terraform.tfvars and replace the
+# placeholder; terraform.tfvars is ignored by Git.
+project_id = "hack-team-cortexaugmentors"
+region     = "us-central1"
+image_tag  = "v1"
+jwt_secret = "replace-with-a-long-random-secret"

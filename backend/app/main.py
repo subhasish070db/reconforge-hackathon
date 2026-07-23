@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 from contextlib import asynccontextmanager
+import logging
+import time
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -12,6 +14,8 @@ from .db import SessionLocal, init_db
 from .routers import audit, auth, breaks, client, configs, governance, loops, regulatory, runs, seed
 
 settings = get_settings()
+# Reuse Uvicorn's configured INFO handler so request lines reach Cloud Logging.
+logger = logging.getLogger("uvicorn.error")
 
 
 @asynccontextmanager
@@ -43,6 +47,31 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def log_request(request, call_next):
+    """Emit Cloud Run-friendly request logs without recording sensitive bodies."""
+    started_at = time.perf_counter()
+    try:
+        response = await call_next(request)
+    except Exception:
+        logger.exception(
+            "request_failed method=%s path=%s duration_ms=%d",
+            request.method,
+            request.url.path,
+            round((time.perf_counter() - started_at) * 1000),
+        )
+        raise
+
+    logger.info(
+        "request_complete method=%s path=%s status=%s duration_ms=%d",
+        request.method,
+        request.url.path,
+        response.status_code,
+        round((time.perf_counter() - started_at) * 1000),
+    )
+    return response
 
 
 @app.get("/api/health")
